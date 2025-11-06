@@ -3,35 +3,32 @@
 Starting boilerplate of [Strapi](https://strapi.io/) application
 
 ## System requirements
+name: Node CI
 
-* NodeJS >= 18
-* NPM >= 6.x
-* Make
+on:
+  - push
+  - pull_request
 
-## Using
+env:
+  CI: true
 
-```sh
-make setup
-make start
-```
+jobs:
+  build:
 
-## Run tests
+    runs-on: ubuntu-latest
 
-```sh
-make test
-```
+    strategy:
+      matrix:
+        node-version: [18.x]
 
-## Run linter
-
-```sh
-make lint
-```
-
----
-
-[![Hexlet Ltd. logo](https://raw.githubusercontent.com/Hexlet/assets/master/images/hexlet_logo128.png)](https://hexlet.io/?utm_source=github&utm_medium=link&utm_campaign=hexlet-ci-app)
-
-This repository is created and maintained by the team and the community of Hexlet, an educational project. [Read more about Hexlet](https://hexlet.io/?utm_source=github&utm_medium=link&utm_campaign=hexlet-ci-app).
-
-See most active contributors on [hexlet-friends](https://friends.hexlet.io/).
-[![show-directory](https://github.com/aseccxz/hexlet-ci-app/actions/workflows/test.yml/badge.svg)](https://github.com/aseccxz/hexlet-ci-app/actions/workflows/test.yml)
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: make install
+      - run: make lint
+      - run: make test
+      - uses: hexlet-components/hello-from-hexlet-action@release
